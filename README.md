@@ -78,6 +78,19 @@ Process.run('ls', ['-l']).then((ProcessResult results) {
 
 错误码可以通过 ProcessResult.exitCode 获取。
 
+程序运行可能会很久，Stream形式读取结果更快
+```
+  final process = await Process.start('ls', ['-l']);
+  var lineStream =
+      process.stdout.transform(Utf8Decoder()).transform(LineSplitter());
+  await for (var line in lineStream) {
+    print(line);
+  }
+
+  await process.stderr.drain();
+  print('exit code: ${await process.exitCode}');
+```
+
 
 ## 杂项
 
